@@ -81,11 +81,11 @@ The dataset source used for streaming medical dialogue samples is **MedDialog** 
 
 Each record consists of multi turn dialogue exchange between emergency dispatchers and callers, labeled across three clinical severity tiers:
 
-| Severity Tier | Category | Description | Example |
+| Severity Tier | Category  | Description | Example |
 |---|---|---|---|
-| **Low**      | Category 3 | Non-life-threatening conditions | Minor lacerations or mild fever |
-| **Medium**   | Category 2 | Urgent conditions requiring medical evaluation | Severe abdominal pain or high fever with lethargy |
-| **Critical** | Category 1 | Potentially life-threatening emergencies | Severe breathing difficulty, acute chest pain, or loss of consciousness |
+| **Low**      | Category 3   | Non-life-threatening conditions                | Minor lacerations or mild fever |
+| **Medium**   | Category 2   | Urgent conditions requiring medical evaluation | Severe abdominal pain or high fever with lethargy |
+| **Critical** | Category 1   | Potentially life-threatening emergencies       | Severe breathing difficulty, acute chest pain, or loss of consciousness |
 
 *These severity descriptions illustrate the intended task categories. They are not clinical diagnostic rules.*
 
