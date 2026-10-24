@@ -134,9 +134,26 @@ To demonstrate deployment readiness, QUEST is engineered as a containerized REST
 
 ## 7. Empirical Output Analysis & Validation
 
-In our baseline tests, running $T=20$ Monte Carlo Dropout passes across multi-turn emergency dialogue transcripts reveals a crucial safety feature: **when the model encounters ambiguous text or under-trained parameters, it refuses to guess**. Instead, it holds predictive uncertainty at its mathematical maximum and hands control to a human expert.
+In our baseline tests, running $T=20$ Monte Carlo Dropout passes across multi-turn emergency dialogue transcripts reveals a crucial safety feature: **when the model encounters ambiguous text or under-trained parameters, it refuses to guess**. Instead, it holds predictive uncertainty at its mathematical maximum and hands control to a human expert. 
 
-### Pipeline Execution Log
+
+================================================================================
+                           EMPIRICAL OUTPUT ANALYSIS
+================================================================================
+Model Backbone    : DistilBertForSequenceClassification (distilbert-base-uncased)
+UQ Technique      : Monte Carlo Dropout (T=20 stochastic passes, p=0.3)
+Class Distribution: 3 Classes (Low, Medium, Critical) -> Max Theoretical Entropy: ln(3) ≈ 1.0986
+Safety Threshold  : τ = 0.50
+--------------------------------------------------------------------------------
+Turn 1 Metrics    : Entropy: 1.0944 | Confidence: 0.3747 | Action: HITL Triggered
+Turn 2 Metrics    : Entropy: 1.0943 | Confidence: 0.3729 | Action: HITL Triggered
+Turn 3 Metrics    : Entropy: 1.0950 | Confidence: 0.3691 | Action: HITL Triggered
+================================================================================ 
+
+
+# The empirical logs confirm that QUEST prioritizes safety over forced automation. When faced with under-calibrated weights or ambiguous dialogue turns, the agent does not output high-risk guesses. Instead, it retains maximum predictive entropy ($H \approx 1.09$) and enforces human-in-the-loop intervention across every turn.
+
+### Pipeline Explaination
 
 ```text
 --- [TURN 1] Triage Prediction: Critical ---
@@ -153,7 +170,7 @@ Action Taken -> Clarification: When did these symptoms first start, and are they
 Metrics -> Entropy: 1.0950 | Confidence: 0.3691
 Agent Reflection -> SELF-ANALYSIS: Predictive Entropy (1.0950) exceeds threshold (0.5). High model variance (0.000000) indicates severe parameter disagreement. Output cannot be trusted autonomously. Halting auto-dispatch and triggering Human-in-the-Loop.
 Action Taken -> Clarification: Can you provide additional clinical history?
-
+```
 ---
 
 ## 9. Limitations
