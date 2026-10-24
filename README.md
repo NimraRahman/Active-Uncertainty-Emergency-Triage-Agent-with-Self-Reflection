@@ -144,8 +144,8 @@ To measure true model uncertainty (epistemic risk stemming from a lack of input 
   $$\hat{p}^{(t)} = \text{Softmax}(f_{\hat{\theta}^{(t)}}(x)) \quad \text{for } t \in \{1, \dots, T\}$$
 * **Predictive Entropy $H(y|x)$:** The agent calculates the mean predictive distribution $\mu(x)$ and computes the total predictive entropy across all potential severity classes $C$:
   $$H(y|x) = -\sum_{c \in C} \mu_c(x) \log\left(\mu_c(x) + \epsilon\right)$$
-  * *High Entropy ($H \to 1.0$):* Model predictions are evenly scattered across categories, signaling high confusion.
-  * *Low Entropy ($H \to 0.0$):* Predictions consistently cluster around a single class, signaling high certainty.
+  * *High Entropy :* Model predictions are evenly scattered across categories, signaling high confusion.
+  * *Low Entropy :* Predictions consistently cluster around a single class, signaling high certainty.
 * **Epistemic Class Variance:** Measures parameter dispersion across the $T=20$ passes to verify internal subnetwork agreement.
 
 ---
