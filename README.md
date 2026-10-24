@@ -30,7 +30,7 @@ Traditional machine learning systems lack self awareness regarding what they *do
 ## 5. Dataset Information & Justification
 
 ### Dataset Description
-The project utilizes a fine tuned corpus of simulated and structured emergency triage transcripts (`emergency_transcripts_labeled.json`). Each record consists of multi turn dialogue exchange between emergency dispatchers and callers, labeled across three clinical severity tiers:
+The dataset source used for streaming medical dialogue samples is MedDialog accessed via Hugging Face. The project utilizes a fine tuned corpus of simulated and structured emergency triage transcripts. Each record consists of multi turn dialogue exchange between emergency dispatchers and callers, labeled across three clinical severity tiers:
 * **Low (Category 3):** Non life threatening conditions (e.g., minor lacerations, mild fever).
 * **Medium (Category 2):** Urgent conditions requiring rapid medical evaluation (e.g., severe abdominal pain, high fever with lethargy).
 * **Critical (Category 1):** Immediate life threatening emergencies (e.g., severe dyspnea, acute chest pain radiating to the arm, loss of consciousness).
