@@ -139,7 +139,7 @@ The empirical logs confirm that QUEST prioritizes safety over forced automation.
 
 > **Experiment:** Uncertainty-aware emergency triage using Monte Carlo Dropout and Human-in-the-Loop (HITL) review.
 
-### ⚙️ Experimental Configuration
+###  Experimental Configuration
 
 | Parameter | Configuration |
 |:---|:---|
@@ -151,17 +151,17 @@ The empirical logs confirm that QUEST prioritizes safety over forced automation.
 | **Maximum Entropy** | `ln(3) ≈ 1.0986` |
 | **Safety Threshold** | `τ = 0.50` |
 
-### 📈 Results Across Dialogue Turns
+###  Results Across Dialogue Turns
 
 | Dialogue Turn | Predictive Entropy | Confidence | Safety Decision |
 |:---:|---:|---:|:---|
-| **Turn 1** | `1.0944` | `0.3747` | 🟠 HITL Triggered |
-| **Turn 2** | `1.0943` | `0.3729` | 🟠 HITL Triggered |
-| **Turn 3** | `1.0950` | `0.3691` | 🟠 HITL Triggered |
+| **Turn 1** | `1.0944` | `0.3747` |  HITL Triggered |
+| **Turn 2** | `1.0943` | `0.3729` |  HITL Triggered |
+| **Turn 3** | `1.0950` | `0.3691` |  HITL Triggered |
 
 **Interpretation:** All three reported entropy values are close to the theoretical maximum of `1.0986`. Each exceeds the configured safety threshold of `0.50`, so the system routes the interaction to human review.
 
-### 🔄 Pipeline Explanation
+###  Pipeline Explanation
 
 ```mermaid
 flowchart TD
@@ -170,13 +170,13 @@ flowchart TD
     C --> D["Predictive Probabilities"]
     D --> E["Calculate Entropy"]
     E --> F{"Entropy > 0.50?"}
-    F -->|Yes| G["🟠 Human Review"]
+    F -->|Yes| G["Human Review"]
     F -->|No| H["Continue Through<br/>Configured Safety Checks"]
     G --> I["Ask Clarifying Questions"]
     I --> J["Human Expert Assessment"]
 ```
 
-### 🧪 Pipeline Execution Log
+###  Pipeline Execution Log
 
 <details>
 <summary><strong>Turn 1 — View prediction and reflection</strong></summary>
@@ -220,7 +220,7 @@ flowchart TD
 
 </details>
 
-### 🔍 Key Findings
+###  Key Findings
 
 - **High predictive uncertainty:** Entropy remains close to the theoretical maximum for a three-class prediction.
 - **Safety-gate activation:** Every reported entropy value exceeds the configured threshold.
@@ -230,7 +230,7 @@ flowchart TD
 > [!IMPORTANT]
 > These results are experimental and do not establish clinical safety or diagnostic accuracy. The system must not replace emergency services or qualified medical professionals.
 
-### ⚠️ Metric Validation Note
+###  Metric Validation Note
 
 The execution log reports model variance as `0.000000` while describing it as "high model variance." These statements are inconsistent and should be checked against the implementation.
 
