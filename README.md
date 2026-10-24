@@ -83,8 +83,8 @@ Each record consists of multi turn dialogue exchange between emergency dispatche
 
 | Severity Tier | Category | Description | Example |
 |---|---|---|---|
-| **Low** | Category 3 | Non-life-threatening conditions | Minor lacerations or mild fever |
-| **Medium** | Category 2 | Urgent conditions requiring medical evaluation | Severe abdominal pain or high fever with lethargy |
+| **Low**      | Category 3 | Non-life-threatening conditions | Minor lacerations or mild fever |
+| **Medium**   | Category 2 | Urgent conditions requiring medical evaluation | Severe abdominal pain or high fever with lethargy |
 | **Critical** | Category 1 | Potentially life-threatening emergencies | Severe breathing difficulty, acute chest pain, or loss of consciousness |
 
 *These severity descriptions illustrate the intended task categories. They are not clinical diagnostic rules.*
