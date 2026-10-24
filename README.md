@@ -135,39 +135,110 @@ In our baseline tests, running $T=20$ Monte Carlo Dropout passes across multi-tu
 
 The empirical logs confirm that QUEST prioritizes safety over forced automation. When faced with under calibrated weights or ambiguous dialogue turns, the agent does not output high-risk guesses. Instead, it retains maximum predictive entropy ($H \approx 1.09$) and enforces human in the loop intervention across every turn.
 
-================================================================================
-                           EMPIRICAL OUTPUT ANALYSIS
-================================================================================
-Model Backbone    : DistilBertForSequenceClassification (distilbert-base-uncased)
-UQ Technique      : Monte Carlo Dropout (T=20 stochastic passes, p=0.3)
-Class Distribution: 3 Classes (Low, Medium, Critical) -> Max Theoretical Entropy: ln(3) ≈ 1.0986
-Safety Threshold  : τ = 0.50
---------------------------------------------------------------------------------
-Turn 1 Metrics    : Entropy: 1.0944 | Confidence: 0.3747 | Action: HITL Triggered
-Turn 2 Metrics    : Entropy: 1.0943 | Confidence: 0.3729 | Action: HITL Triggered
-Turn 3 Metrics    : Entropy: 1.0950 | Confidence: 0.3691 | Action: HITL Triggered
-================================================================================
+### Empirical Output Analysis
 
+> **Experiment:** Uncertainty-aware emergency triage using Monte Carlo Dropout and Human-in-the-Loop (HITL) review.
 
-### Pipeline Explaination
+### ⚙️ Experimental Configuration
 
-```text
---- [TURN 1] Triage Prediction: Critical ---
-Metrics -> Entropy: 1.0944 | Confidence: 0.3747
-Agent Reflection -> SELF-ANALYSIS: Predictive Entropy (1.0944) exceeds threshold (0.5). High model variance (0.000000) indicates severe parameter disagreement. Output cannot be trusted autonomously. Halting auto-dispatch and triggering Human-in-the-Loop.
-Action Taken -> Clarification: Does the patient experience chest pain or pressure radiating to the arm/jaw?
+| Parameter | Configuration |
+|:---|:---|
+| **Model Backbone** | `distilbert-base-uncased` |
+| **Uncertainty Technique** | Monte Carlo Dropout |
+| **Stochastic Passes** | `T = 20` |
+| **Dropout Probability** | `p = 0.3` |
+| **Number of Classes** | 3 — Low, Medium, Critical |
+| **Maximum Entropy** | `ln(3) ≈ 1.0986` |
+| **Safety Threshold** | `τ = 0.50` |
 
---- [TURN 2] Triage Prediction: Critical ---
-Metrics -> Entropy: 1.0943 | Confidence: 0.3729
-Agent Reflection -> SELF-ANALYSIS: Predictive Entropy (1.0943) exceeds threshold (0.5). High model variance (0.000000) indicates severe parameter disagreement. Output cannot be trusted autonomously. Halting auto-dispatch and triggering Human-in-the-Loop.
-Action Taken -> Clarification: When did these symptoms first start, and are they continuous?
+### 📈 Results Across Dialogue Turns
 
---- [TURN 3] Triage Prediction: Critical ---
-Metrics -> Entropy: 1.0950 | Confidence: 0.3691
-Agent Reflection -> SELF-ANALYSIS: Predictive Entropy (1.0950) exceeds threshold (0.5). High model variance (0.000000) indicates severe parameter disagreement. Output cannot be trusted autonomously. Halting auto-dispatch and triggering Human-in-the-Loop.
-Action Taken -> Clarification: Can you provide additional clinical history?
+| Dialogue Turn | Predictive Entropy | Confidence | Safety Decision |
+|:---:|---:|---:|:---|
+| **Turn 1** | `1.0944` | `0.3747` | 🟠 HITL Triggered |
+| **Turn 2** | `1.0943` | `0.3729` | 🟠 HITL Triggered |
+| **Turn 3** | `1.0950` | `0.3691` | 🟠 HITL Triggered |
+
+**Interpretation:** All three reported entropy values are close to the theoretical maximum of `1.0986`. Each exceeds the configured safety threshold of `0.50`, so the system routes the interaction to human review.
+
+### 🔄 Pipeline Explanation
+
+```mermaid
+flowchart TD
+    A["Emergency Dialogue Input"] --> B["DistilBERT Classifier"]
+    B --> C["Monte Carlo Dropout<br/>20 Stochastic Passes"]
+    C --> D["Predictive Probabilities"]
+    D --> E["Calculate Entropy"]
+    E --> F{"Entropy > 0.50?"}
+    F -->|Yes| G["🟠 Human Review"]
+    F -->|No| H["Continue Through<br/>Configured Safety Checks"]
+    G --> I["Ask Clarifying Questions"]
+    I --> J["Human Expert Assessment"]
 ```
+
+### 🧪 Pipeline Execution Log
+
+<details>
+<summary><strong>Turn 1 — View prediction and reflection</strong></summary>
+
+- **Triage prediction:** Critical
+- **Entropy:** `1.0944`
+- **Confidence:** `0.3747`
+- **Safety action:** Human-in-the-Loop review
+
+**Clarification question:**
+
+> Does the patient experience chest pain or pressure radiating to the arm or jaw?
+
+</details>
+
+<details>
+<summary><strong>Turn 2 — View prediction and reflection</strong></summary>
+
+- **Triage prediction:** Critical
+- **Entropy:** `1.0943`
+- **Confidence:** `0.3729`
+- **Safety action:** Human-in-the-Loop review
+
+**Clarification question:**
+
+> When did these symptoms first start, and are they continuous?
+
+</details>
+
+<details>
+<summary><strong>Turn 3 — View prediction and reflection</strong></summary>
+
+- **Triage prediction:** Critical
+- **Entropy:** `1.0950`
+- **Confidence:** `0.3691`
+- **Safety action:** Human-in-the-Loop review
+
+**Clarification question:**
+
+> Can you provide additional clinical history?
+
+</details>
+
+### 🔍 Key Findings
+
+- **High predictive uncertainty:** Entropy remains close to the theoretical maximum for a three-class prediction.
+- **Safety-gate activation:** Every reported entropy value exceeds the configured threshold.
+- **Clarification before reliance:** The pipeline requests additional information instead of treating an uncertain prediction as sufficient for autonomous action.
+- **Human oversight:** The prototype routes uncertain cases for expert assessment.
+
+> [!IMPORTANT]
+> These results are experimental and do not establish clinical safety or diagnostic accuracy. The system must not replace emergency services or qualified medical professionals.
+
+### ⚠️ Metric Validation Note
+
+The execution log reports model variance as `0.000000` while describing it as "high model variance." These statements are inconsistent and should be checked against the implementation.
+
+Predictive entropy measures uncertainty in the aggregate prediction; it does not, by itself, prove disagreement among the stochastic passes. Verify that the code calculates predictive entropy, mean confidence, and variance correctly before making stronger claims.
+
 ---
+
+
 
 ## 9. Limitations
 * **Text-Based Pipeline:** Currently operates on written transcriptions rather than direct processing of raw speech acoustics or vocal stress cues.
