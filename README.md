@@ -11,9 +11,9 @@
 
 **QUEST** stands for **Q**uantifying **U**ncertainty in **E**mergency **S**ystem **T**riage.
 
-QUEST is a research-grade AI decision-support prototype designed to explore how uncertainty-aware language models can support emergency dispatchers in high-stakes situations.
+QUEST is a research grade practice oriented emergency triage prototype devised to address epistemic uncertainty and fragmented human-machine coordination in emergency dispatch workflows while exploring how uncertainty aware language models can assist humans in high-stakes situations.
 
-Conventional deep-learning classifiers produce predictions that can appear confident even when the input is incomplete, ambiguous, or outside the distribution encountered during training.
+Traditional deep learning classifiers produce predictions that can appear confident even when the input is incomplete, ambiguous, or outside the distribution encountered during training.
 
 QUEST investigates an alternative approach by combining:
 
@@ -36,8 +36,8 @@ Rather than treating every prediction as reliable, QUEST is designed to identify
 | **Multi-Turn Dialogue Evaluation** | Processes written emergency caller and dispatcher transcripts across dialogue turns. |
 | **Uncertainty Quantification** | Calculates predictive entropy and measures variability across stochastic model passes. |
 | **Meta-Analytic Self-Assessment** | Compares predictive entropy against a configured safety threshold. |
-| **Risk-Aware Gating** | Routes high-uncertainty cases for human review rather than treating the prediction as sufficient for autonomous action. |
-| **Clarification Prompts** | Suggests follow-up questions to help gather additional information. |
+| **Risk-Aware Gating** | Routes high uncertainty cases for human review rather than treating the prediction as sufficient for autonomous action. |
+| **Clarification Prompts** | Suggests follow up questions to help gather additional information. |
 | **API-Oriented Design** | Specifies a potential deployment interface using FastAPI and structured JSON responses. |
 
 ---
@@ -54,7 +54,7 @@ This statement provides insufficient context for a dependable severity assessmen
 
 QUEST investigates a **safe-fail approach** in which uncertainty becomes an explicit part of the decision process.
 
-Instead of treating automation as an all-or-nothing decision, the system evaluates whether its output meets a configured uncertainty criterion and escalates cases that require additional human assessment.
+Instead of treating automation as an all or nothing decision, the system evaluates whether its output meets a configured uncertainty criterion and escalates cases that require additional human assessment.
 
 ### Research Motivation
 
@@ -69,7 +69,7 @@ Instead of treating automation as an all-or-nothing decision, the system evaluat
 
 > **How can artificial intelligence systems dynamically quantify their own epistemic uncertainty and determine when to transition from automated processing to human-in-the-loop intervention in high-stakes, ambiguous environments?**
 
-QUEST explores this question through uncertainty estimation, threshold-based safety gating, and multi-turn clarification workflows.
+QUEST explores this question through uncertainty estimation, threshold based safety gating, and multi-turn clarification workflows.
 
 ---
 
@@ -220,7 +220,7 @@ The decision rule is:
 \end{cases}
 \]
 
-A low-entropy result should still undergo any other required validation and operational safety checks.
+A low entropy result should still undergo any other required validation and operational safety checks.
 
 #### Example Diagnostic Messages
 
@@ -311,7 +311,7 @@ QUEST specifies a possible containerized REST API architecture.
 | `requirements.txt` | Python dependency specification |
 | `/docs` | FastAPI's interactive API documentation when the service is running |
 
-A potential request-response workflow is:
+A potential request and response workflow is:
 
 ```mermaid
 sequenceDiagram
@@ -467,7 +467,7 @@ Before making claims about model disagreement, verify that the implementation:
 - Uses a threshold that has been evaluated and justified on validation data.
 
 > [!IMPORTANT]
-> These results demonstrate the reported threshold-triggering behavior only. They do not establish calibrated uncertainty, correct triage classifications, improved clinical outcomes, or clinical safety.
+> These results demonstrate the reported threshold triggering behavior only. They do not establish calibrated uncertainty, correct triage classifications, improved clinical outcomes, or clinical safety.
 
 ---
 
@@ -492,7 +492,7 @@ The architecture supports reassessing model outputs as new dialogue information 
 | Contribution | Intended Benefit |
 |---|---|
 | Explicit uncertainty metrics | Greater visibility into prediction ambiguity |
-| Threshold-based gating | Consistent application of the configured review rule |
+| Threshold based gating | Consistent application of the configured review rule |
 | Clarification workflow | Structured collection of further context |
 | Multi-turn assessment | Analysis of how predictions change across dialogue turns |
 
@@ -502,13 +502,13 @@ The architecture supports reassessing model outputs as new dialogue information 
 
 | Limitation | Description |
 |---|---|
-| **Text-Based Processing** | The current design processes written transcripts rather than raw speech acoustics, vocal stress, or prosody. |
+| **Text Based Processing** | The current design processes written transcripts rather than raw speech acoustics, vocal stress, or prosody. |
 | **Static Threshold** | The current configuration uses a fixed threshold of `τ = 0.50`. |
 | **Calibration Not Established** | The reported outputs alone do not demonstrate that uncertainty values are calibrated against observed error rates. |
 | **Evaluation Scope** | Three logged dialogue turns are insufficient to establish general performance or robustness. |
-| **Clinical Validation** | The prototype has not been established as a clinical-grade medical device. |
+| **Clinical Validation** | The prototype has not been established as a clinical grade medical device. |
 | **Variance Calculation** | The reported zero variance and its interpretation require verification. |
-| **Dataset Reproducibility** | The exact dataset version, split strategy, and label-generation procedure should be documented for reproducibility. |
+| **Dataset Reproducibility** | The exact dataset version, split strategy, and label generation procedure should be documented for reproducibility. |
 
 ---
 
@@ -524,7 +524,7 @@ Evaluate the system using appropriately governed emergency dispatch data, with a
 
 ### Active Learning and Information Gain
 
-Investigate question-selection strategies that choose clarification prompts based on expected information gain.
+Investigate question snd selection strategies that choose clarification prompts based on expected information gain.
 
 One possible research objective is:
 
@@ -567,7 +567,7 @@ Evaluate the prototype using:
 
 ### Hardware
 
-- NVIDIA CUDA-compatible GPU, where available.
+- NVIDIA CUDA compatible GPU, where available.
 - Google Colab GPU runtime as an alternative experimental environment.
 - CPU execution may be possible, but inference can be slower.
 
@@ -676,20 +676,20 @@ The notebook and asset paths are suggested organizational choices. Include them 
 
 - Model predictions may be incorrect even when uncertainty is low.
 - High predictive uncertainty does not identify the correct diagnosis.
-- A threshold-triggered review does not itself guarantee a safe outcome.
+- A threshold triggered review does not itself guarantee a safe outcome.
 - Clinical decisions must remain with qualified professionals using appropriate emergency protocols.
 - Any future clinical use would require rigorous technical, clinical, ethical, and regulatory evaluation.
 
 ### Research Goal
 
-QUEST explores a transparent, uncertainty-aware approach to AI-assisted emergency dialogue processing, with emphasis on identifying uncertain predictions and supporting human oversight.
+QUEST explores a transparent, uncertainty aware approach to AI assisted emergency dialogue processing, with emphasis on identifying uncertain predictions and supporting human oversight.
 
-**The goal is not to replace human judgment, but to investigate how uncertainty can make AI-assisted decision workflows more accountable.**
+**The goal is not to replace human judgment, but to investigate how uncertainty can make AI assisted decision workflows more accountable.**
 
 ---
 
 <p align="center">
-  <strong>QUEST — Uncertainty-Aware AI for Human-Centered Emergency Decision Support</strong>
+  <strong>QUEST — Uncertainty Aware AI for Human-Centered Emergency Decision Support</strong>
 </p>
 
 <p align="center">
