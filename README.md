@@ -77,9 +77,9 @@ QUEST explores this question through uncertainty estimation, threshold based saf
 
 ### Dataset Description
 
-The project describes using **MedDialog**, accessed through Hugging Face, as a source of medical dialogue data for experimentation.
+The dataset source used for streaming medical dialogue samples is **MedDialog** accessed via Hugging Face as a source of medical dialogue data for experimentation.
 
-The intended task organizes triage outcomes into three severity tiers:
+Each record consists of multi turn dialogue exchange between emergency dispatchers and callers, labeled across three clinical severity tiers:
 
 | Severity Tier | Category | Description | Example |
 |---|---|---|---|
