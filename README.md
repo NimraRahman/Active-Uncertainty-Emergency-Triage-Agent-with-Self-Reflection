@@ -2,11 +2,7 @@
 # QUEST — Quantifying Uncertainty in Emergency System Triage
 
 <p align="center">
-  <strong>A AI Decision-Support Research Prototype</strong>
-</p>
-
-<p align="center">
-  Quantifying predictive uncertainty to support human oversight in high-stakes emergency triage.
+  <strong>n advanced, safety critical AI assistant prototype designed to support emergency dispatchers by quantifying epistemic uncertainty in real time and dynamically triggering human in the loop oversight.</strong>
 </p>
 
 ---
