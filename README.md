@@ -76,9 +76,7 @@ QUEST explores this question through uncertainty estimation, threshold based saf
 
 ### Dataset Description
 
-The dataset source used for streaming medical dialogue samples is **MedDialog** accessed via Hugging Face as a source of medical dialogue data for experimentation.
-
-Each record consists of multi turn dialogue exchange between emergency dispatchers and callers, labeled across three clinical severity tiers are:
+The dataset source used for streaming medical dialogue samples is **MedDialog** accessed via Hugging Face as a source of medical dialogue data for experimentation. Each record consists of multi turn dialogue exchange between emergency dispatchers and callers.
 
 * **Label Mapping:** Class labels map directly to clinical priority tiers:
   * `0`: **Low (Category 3)** — Non-life-threatening conditions.
