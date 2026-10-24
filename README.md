@@ -1,266 +1,732 @@
-# QUEST: Quantifying Uncertainty in Emergency System Triage
 
-An advanced, safety critical AI assistant prototype designed to support emergency dispatchers by quantifying epistemic uncertainty in real time and dynamically triggering human in the loop oversight.
+# QUEST — Quantifying Uncertainty in Emergency System Triage
+
+<p align="center">
+  <strong>A Safety-Aware AI Decision-Support Research Prototype</strong>
+</p>
+
+<p align="center">
+  Quantifying predictive uncertainty to support human oversight in high-stakes emergency triage.
+</p>
+
+<p align="center">
+  ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
+  ![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-ee4c2c?logo=pytorch&logoColor=white)
+  ![Hugging Face](https://img.shields.io/badge/Transformers-Hugging%20Face-yellow?logo=huggingface&logoColor=black)
+  ![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)
+  ![Research](https://img.shields.io/badge/Project-Research%20Prototype-blueviolet)
+  ![Status](https://img.shields.io/badge/Status-Experimental-orange)
+</p>
 
 ---
 
-## 1. What is QUEST?
-**QUEST** (**Q**uantifying **U**ncertainty in **E**mergency **S**ystem **T**riage) is a research grade decision support prototype designed for high-stakes clinical and emergency response environments. 
+## Table of Contents
 
-Standard deep learning classifiers produce point estimate outputs that can be dangerously overconfident when faced with incomplete, ambiguous, or out of distribution text. QUEST addresses this fundamental limitation by equipping fine tuned language models with **Epistemic Uncertainty Quantification (UQ)** and a **Meta-Analytic Self-Reflection Node**. Rather than making uncalibrated autonomous decisions on vague emergency transcripts, the agent actively assesses its own reliability and hands over control to a human expert when uncertainty is high.
+- [1. What Is QUEST?](#1-what-is-quest)
+- [2. Core Operational Capabilities](#2-core-operational-capabilities)
+- [3. Why This Research Matters](#3-why-this-research-matters)
+- [4. Core Research Question](#4-core-research-question)
+- [5. Dataset Information and Justification](#5-dataset-information-and-justification)
+- [6. System Architecture and Detailed Mechanics](#6-system-architecture-and-detailed-mechanics)
+  - [Module 1: Uncertainty Quantification](#module-1-epistemic-uncertainty-quantification)
+  - [Module 2: Self-Reflection Engine](#module-2-meta-analytic-self-reflection-engine)
+  - [Module 3: Human-in-the-Loop Gating](#module-3-human-in-the-loop-hitl-safe-fail-gating)
+  - [Module 4: Deployment Architecture](#module-4-deployment-architecture)
+- [7. Empirical Output Analysis and Validation](#7-empirical-output-analysis-and-validation)
+- [8. Key Contributions and Advantages](#8-key-contributions-and-advantages)
+- [9. Limitations](#9-limitations)
+- [10. Future Research Directions](#10-future-research-directions)
+- [11. Technical Requirements and Environment Setup](#11-technical-requirements-and-environment-setup)
+- [12. Repository Structure](#12-repository-structure)
+- [13. Safety and Research Disclaimer](#13-safety-and-research-disclaimer)
+
+---
+
+## 1. What Is QUEST?
+
+**QUEST** stands for **Q**uantifying **U**ncertainty in **E**mergency **S**ystem **T**riage.
+
+QUEST is a research-grade AI decision-support prototype designed to explore how uncertainty-aware language models can support emergency dispatchers in high-stakes situations.
+
+Conventional deep-learning classifiers produce predictions that can appear confident even when the input is incomplete, ambiguous, or outside the distribution encountered during training.
+
+QUEST investigates an alternative approach by combining:
+
+- **Epistemic uncertainty quantification** using Monte Carlo Dropout.
+- **Meta-analytic self-reflection** to evaluate model outputs against a predefined safety threshold.
+- **Human-in-the-Loop (HITL) oversight** when uncertainty exceeds that threshold.
+- **Targeted clarification prompts** intended to help gather additional contextual information.
+
+Rather than treating every prediction as reliable, QUEST is designed to identify situations in which the model's output should not be relied upon without further assessment.
+
+> [!IMPORTANT]
+> QUEST is an experimental research prototype, not a clinically validated medical device. Its predictions must not replace emergency services, qualified dispatchers, or medical professionals.
 
 ---
 
 ## 2. Core Operational Capabilities
-* **Real-Time Dialogue Evaluation:** Continuously parses multi-turn transcripts between emergency callers and dispatchers.
-* **Epistemic Uncertainty Estimation:** Computes explicit mathematical metrics representing internal parameter variance and model confusion.
-* **Meta-Analytic Self-Assessment:** Evaluates its own confidence output against a precalibrated safety boundary before attempting automated classification.
-* **Autonomous Intervention Triggering:** Detects high risk ambiguity and automatically generates targeted, clinical clarifying questions for human dispatchers to ask the caller.
+
+| Capability | Description |
+|---|---|
+| **Multi-Turn Dialogue Evaluation** | Processes written emergency caller and dispatcher transcripts across dialogue turns. |
+| **Uncertainty Quantification** | Calculates predictive entropy and measures variability across stochastic model passes. |
+| **Meta-Analytic Self-Assessment** | Compares predictive entropy against a configured safety threshold. |
+| **Risk-Aware Gating** | Routes high-uncertainty cases for human review rather than treating the prediction as sufficient for autonomous action. |
+| **Clarification Prompts** | Suggests follow-up questions to help gather additional information. |
+| **API-Oriented Design** | Specifies a potential deployment interface using FastAPI and structured JSON responses. |
 
 ---
 
 ## 3. Why This Research Matters
-In emergency medical dispatch, an uncalibrated AI model that "guesses" on ambiguous input can cause catastrophic real-world harm—such as misclassifying a critical cardiac event as a low priority call. 
 
-Traditional machine learning systems lack self awareness regarding what they *do not know*. QUEST establishes a **safe-fail paradigm**: a design philosophy ensuring that when an AI encounters high epistemic risk, it refuses to act autonomously. This transforms the AI from a opaque decision maker into a transparent, safe-fail collaborative partner for human operators.
+Emergency medical dispatch involves incomplete information, time pressure, and potentially severe consequences when symptoms are misunderstood.
 
-## 4. Core Research Question
-> *"How can artificial intelligence systems dynamically quantify their own epistemic uncertainty and autonomously decide when to transition from automated processing to human in the loop intervention in high-stakes, ambiguous environments?"*
+For example, a caller might initially report:
 
-## 5. Dataset Information & Justification
+> "My relative doesn't feel well."
 
-### Dataset Description
-The dataset source used for streaming medical dialogue samples is MedDialog accessed via Hugging Face. The project utilizes a fine tuned corpus of simulated and structured emergency triage transcripts. Each record consists of multi turn dialogue exchange between emergency dispatchers and callers, labeled across three clinical severity tiers:
-* **Low (Category 3):** Non life threatening conditions (e.g., minor lacerations, mild fever).
-* **Medium (Category 2):** Urgent conditions requiring rapid medical evaluation (e.g., severe abdominal pain, high fever with lethargy).
-* **Critical (Category 1):** Immediate life threatening emergencies (e.g., severe dyspnea, acute chest pain radiating to the arm, loss of consciousness).
+This statement provides insufficient context for a dependable severity assessment. A conventional classifier may still generate a label, but generating a label does not establish that the prediction is trustworthy.
 
-### Justification for Use
-1. **Real-World Clinical Ambiguity:** Emergency calls naturally begin with fragmented, high entropy statements (e.g., *"My relative doesn't feel well"*). This provides the ideal domain for evaluating how epistemic uncertainty collapses as diagnostic details are introduced.
-2. **Safety-Critical Domain Alignment:** Medical triage serves as an optimal benchmark for testing human in the loop "safe-fail" mechanisms, where autonomous AI misclassifications carry severe real world risk.
-3. **Multi-Turn Evaluation:** The dataset structure enables testing sequential dialogue convergence—proving that model entropy $H(y|x)$ drops systematically as clinical context expands across turns.
+QUEST investigates a **safe-fail approach** in which uncertainty becomes an explicit part of the decision process.
+
+Instead of treating automation as an all-or-nothing decision, the system evaluates whether its output meets a configured uncertainty criterion and escalates cases that require additional human assessment.
+
+### Research Motivation
+
+- **Reliability:** Detect predictions that remain highly uncertain.
+- **Transparency:** Expose quantitative metrics associated with a model's output.
+- **Human oversight:** Make uncertainty a trigger for review rather than hiding it behind a single predicted label.
+- **Responsible automation:** Avoid treating an unvalidated model prediction as sufficient justification for a high-stakes action.
 
 ---
 
-## 6. System Architecture & Detailed Mechanics
+## 4. Core Research Question
 
-                         +-----------------------------------+
-                         |         Caller / Text Input       |
-                         +-----------------+-----------------+
-                                           |
-                                           v
-                         +-----------------------------------+
-                         |  Monte Carlo (MC) Dropout Engine  |
-                         |   (T = 20 Stochastic Passes)      |
-                         +-----------------+-----------------+
-                                           |
-                                           v
-                         +-----------------------------------+
-                         | Quantify Predictive Entropy H(y|x)|
-                         | & Class Disagreement Variance     |
-                         +-----------------+-----------------+
-                                           |
-                                           v
-                         +-----------------------------------+
-                         | Meta-Analytic Self-Reflection     |
-                         |        Evaluation Layer           |
-                         +-----------------+-----------------+
-                                           |
-                                 Is H(y|x) > tau (0.5)?
-                                 /                   \
-                               YES                    NO
-                               /                       \
-                              v                         v
-               +-----------------------------+  +----------------------------+
-               |    HIGH EPISTEMIC RISK      |  |     LOW RISK / VERIFIED    |
-               |                             |  |                            |
-               | * Halt Autonomous Dispatch  |  | * Safe for Auto-Triage     |
-               | * Trigger Human in Loop     |  | * Assign Severity Label    |
-               | * Generate Clarifying Prompt|  | * Dispatch Medical Units   |
-               +-----------------------------+  +----------------------------+
+> **How can artificial intelligence systems dynamically quantify their own epistemic uncertainty and determine when to transition from automated processing to human-in-the-loop intervention in high-stakes, ambiguous environments?**
 
-### Module 1: Epistemic Uncertainty Quantification (UQ)
-To measure true model uncertainty (epistemic risk stemming from a lack of input data/context), QUEST implements **Monte Carlo Dropout** during the inference phase.
+QUEST explores this question through uncertainty estimation, threshold-based safety gating, and multi-turn clarification workflows.
 
-* **Stochastic Inference ($T=20$):** Rather than performing a single deterministic forward pass, internal dropout layers ($p=0.3$) remain active at test time. The system executes $T=20$ stochastic forward passes over the exact same input utterance:
-  $$\hat{p}^{(t)} = \text{Softmax}(f_{\hat{\theta}^{(t)}}(x)) \quad \text{for } t \in \{1, \dots, T\}$$
-* **Predictive Entropy $H(y|x)$:** The agent calculates the mean predictive distribution $\mu(x)$ and computes the total predictive entropy across all potential severity classes $C$:
-  $$H(y|x) = -\sum_{c \in C} \mu_c(x) \log\left(\mu_c(x) + \epsilon\right)$$
-  * *High Entropy ($H \to 1.0$):* Model predictions are evenly scattered across categories, signaling high confusion.
-  * *Low Entropy ($H \to 0.0$):* Predictions consistently cluster around a single class, signaling high certainty.
-* **Epistemic Class Variance:** Measures parameter dispersion across the $T=20$ passes to verify internal subnetwork agreement.
+---
+
+## 5. Dataset Information and Justification
+
+### Dataset Description
+
+The project describes using **MedDialog**, accessed through Hugging Face, as a source of medical dialogue data for experimentation.
+
+The intended task organizes triage outcomes into three severity tiers:
+
+| Severity Tier | Category | Description | Example |
+|---|---|---|---|
+| **Low** | Category 3 | Non-life-threatening conditions | Minor lacerations or mild fever |
+| **Medium** | Category 2 | Urgent conditions requiring medical evaluation | Severe abdominal pain or high fever with lethargy |
+| **Critical** | Category 1 | Potentially life-threatening emergencies | Severe breathing difficulty, acute chest pain, or loss of consciousness |
+
+*These severity descriptions illustrate the intended task categories. They are not clinical diagnostic rules.*
+
+### Justification for Use
+
+**1. Clinical ambiguity**
+
+Emergency conversations may begin with fragmented descriptions that provide insufficient information for confident classification.
+
+**2. Safety-critical decision support**
+
+Triage provides a useful research setting for investigating when uncertain model predictions should be escalated for human review.
+
+**3. Multi-turn evaluation**
+
+Sequential dialogue can be used to investigate how predictive uncertainty changes as new contextual information becomes available.
+
+> **Evaluation objective:** Measure whether uncertainty responds appropriately to new information rather than assuming that every additional dialogue turn will reduce it.
+
+*Dataset note: The exact dataset version, preprocessing procedure, label mapping, and train/validation/test splits should be documented when these details are available.*
+
+---
+
+## 6. System Architecture and Detailed Mechanics
+
+### High-Level Architecture
+
+The following diagram illustrates the intended QUEST decision workflow.
+
+```mermaid
+flowchart TD
+    A["Caller / Emergency Dialogue"] --> B["Language Model Classifier"]
+    B --> C["Monte Carlo Dropout Engine"]
+    C --> D["Predictive Probability Distributions"]
+    D --> E["Uncertainty Calculation"]
+    E --> F["Meta-Analytic Self-Reflection"]
+    F --> G{"Entropy > Threshold?"}
+
+    G -->|Yes| H["High-Uncertainty Case"]
+    H --> I["Block Autonomous Decision"]
+    I --> J["Human Review"]
+    J --> K["Request Clarifying Information"]
+
+    G -->|No| L["Continue Configured Safety Checks"]
+    L --> M["Human-Authorized Workflow"]
+```
+
+**Core principle:** The model generates a prediction and an uncertainty estimate. A separate decision layer evaluates whether the output satisfies the configured uncertainty criterion.
+
+Passing an entropy threshold alone does not establish clinical correctness or guarantee that a prediction is safe.
+
+### Module 1: Epistemic Uncertainty Quantification
+
+QUEST investigates **Monte Carlo Dropout (MC Dropout)** as a technique for measuring variability across stochastic inference passes.
+
+#### Stochastic Inference
+
+Instead of performing a single forward pass, dropout remains active during inference. The same input is processed through \(T\) stochastic passes.
+
+The predictive distribution for pass \(t\) is:
+
+\[
+\hat{p}^{(t)} =
+\operatorname{Softmax}\left(f_{\hat{\theta}^{(t)}}(x)\right)
+\]
+
+where:
+
+- \(x\) is the input dialogue.
+- \(T\) is the number of stochastic passes.
+- \(\hat{\theta}^{(t)}\) represents the effective model configuration for pass \(t\).
+
+The mean predictive probability for class \(c\) is:
+
+\[
+\mu_c(x) =
+\frac{1}{T}\sum_{t=1}^{T}\hat{p}^{(t)}_c
+\]
+
+#### Predictive Entropy
+
+Predictive entropy measures the uncertainty in the aggregate class distribution:
+
+\[
+H(y\mid x) =
+-\sum_{c\in C}
+\mu_c(x)\log\left(\mu_c(x)+\epsilon\right)
+\]
+
+where \(C\) is the set of severity classes and \(\epsilon\) is a small numerical stabilizer.
+
+For three classes with natural logarithms, maximum entropy occurs when all classes have equal probability:
+
+\[
+H_{\max}=\ln(3)\approx 1.0986
+\]
+
+| Entropy Pattern | General Interpretation |
+|---|---|
+| Near `0` | Probability concentrated on one class |
+| Near `ln(3)` | Probability distributed relatively evenly across three classes |
+
+High predictive entropy indicates ambiguity in the aggregate prediction. By itself, it does not prove that the uncertainty is epistemic or that different model passes disagree.
+
+#### Class Variance
+
+QUEST also intends to measure variability across MC Dropout passes. This requires a clearly specified variance calculation over the stochastic class probabilities or another explicitly defined model output.
+
+Predictive entropy and variance measure different properties and should not be used interchangeably.
 
 ---
 
 ### Module 2: Meta-Analytic Self-Reflection Engine
-The system features a dedicated meta-evaluation layer that intercepts model outputs before any decision is routed to dispatch infrastructure.
 
-* **Safety Boundary Evaluation ($\tau = 0.5$):** The self reflection node evaluates $H(y|x)$ against an empirically calibrated threshold $\tau = 0.5$.
-* **Automated Safety Diagnostics:**
-  * **If $H(y|x) > \tau$:** The reflection engine flags an explicit internal system warning:
-    > `"HIGH_EPISTEMIC_RISK: Predictive entropy (H = 0.98) exceeds safety threshold (tau = 0.50). Autonomous classification halted. Human intervention required."`
-  * **If $H(y|x) \le \tau$:** The reflection engine validates the signal:
-    > `"SIGNAL_CONVERGED: Predictive entropy (H = 0.18) within safe operating bounds. Automated classification approved."`
+The self-reflection layer evaluates model outputs before a downstream decision is considered.
+
+#### Safety Threshold
+
+The current experimental configuration specifies:
+
+\[
+\tau=0.50
+\]
+
+The decision rule is:
+
+\[
+\text{Decision}(x)=
+\begin{cases}
+\text{Human review}, & H(y\mid x)>\tau\\
+\text{Continue safety checks}, & H(y\mid x)\leq\tau
+\end{cases}
+\]
+
+A low-entropy result should still undergo any other required validation and operational safety checks.
+
+#### Example Diagnostic Messages
+
+**High-uncertainty state — illustrative message**
+
+```text
+HIGH_EPISTEMIC_RISK
+
+Predictive entropy exceeds the configured safety threshold.
+Autonomous classification is halted.
+Human intervention is required.
+```
+
+**Lower-uncertainty state — illustrative message**
+
+```text
+UNCERTAINTY_WITHIN_THRESHOLD
+
+Predictive entropy is at or below the configured threshold.
+Continue required validation and downstream safety checks.
+```
+
+These messages illustrate the intended system behavior; they are not evidence of a clinically validated operating boundary.
 
 ---
 
 ### Module 3: Human-in-the-Loop (HITL) Safe-Fail Gating
-When high uncertainty is flagged, QUEST enforces a safe-fail protocol designed to systematically reduce entropy across dialogue turns.
 
-* **Turn 1 (Ambiguous Initial Signal):**
-  * *Caller:* *"Help, my relative is unwell and struggling to breathe."*
-  * *System State:* $H(y|x) \approx 0.98$. Autonomous dispatch is blocked.
-  * *HITL Trigger:* The agent prompts the dispatcher to ask: *"Is the patient experiencing chest pain, tightness, or pain spreading to the left arm?"*
-* **Turn 2 (Clinical Context Expansion):**
-  * *Caller:* *"Yes, he says his chest feels very tight and his left arm feels heavy."*
-  * *System State:* New clinical markers align with cardiac severity patterns, parameter variance decreases rapidly.
-* **Turn 3 (Uncertainty Collapse & Convergence):**
-  * *Caller:* *"It started suddenly about 10 minutes ago."*
-  * *System State:* Entropy collapses below the safety threshold ($H(y|x) \approx 0.18$). Model confidence reaches $>85\%$, safely confirming a **Critical (Category 1)** triage designation.
+When the uncertainty criterion is exceeded, QUEST is designed to route the case for human review and suggest clarification questions.
+
+#### Illustrative Dialogue Scenario
+
+<details>
+<summary><strong>Turn 1 — Ambiguous initial signal</strong></summary>
+
+**Caller**
+
+> "Help, my relative is unwell and struggling to breathe."
+
+**Intended system response**
+
+- Calculate the predictive distribution and uncertainty.
+- Check the result against the configured threshold.
+- Request human review if the threshold is exceeded.
+- Suggest appropriate follow-up questions for the dispatcher.
+
+**Example clarification**
+
+> Is the patient experiencing chest pain, tightness, or pain spreading to the arm?
+
+</details>
+
+<details>
+<summary><strong>Turn 2 — Additional clinical context</strong></summary>
+
+**Illustrative caller response**
+
+> "Yes, he says his chest feels very tight and his left arm feels heavy."
+
+The new information changes the input context. QUEST should recalculate its predictive distribution and uncertainty rather than assuming that uncertainty necessarily decreases.
+
+</details>
+
+<details>
+<summary><strong>Turn 3 — Further context</strong></summary>
+
+**Illustrative caller response**
+
+> "It started suddenly about 10 minutes ago."
+
+The system can reassess its output using the expanded transcript. Any triage designation and next steps must remain subject to qualified human assessment.
+
+</details>
+
+> [!NOTE]
+> This dialogue describes an intended research scenario. The empirical results in Section 7 are reported separately; they do not demonstrate uncertainty collapsing below the threshold in this three-turn experiment.
 
 ---
 
-### Module 4: Production Deployment Architecture
-To demonstrate deployment readiness, QUEST is engineered as a containerized REST microservice:
+### Module 4: Deployment Architecture
 
-* **FastAPI Backend (`app.py`):** An asynchronous Python API exposing structured endpoints (`POST /evaluate triage`) that process JSON dialogue payloads and return complete uncertainty metrics, triage states, and reflection logs.
-* **Docker Containerization (`Dockerfile`):** Encapsulates the PyTorch environment, Hugging Face transformer binaries, and execution dependencies into a portable, production ready container image.
-* **Cloud Infrastructure Deployment:** Hosted via cloud web container services, exposing public HTTPS REST endpoints alongside interactive **OpenAPI / Swagger UI documentation** (`/docs`).
+QUEST specifies a possible containerized REST API architecture.
+
+| Component | Intended Role |
+|---|---|
+| `app.py` | FastAPI application for structured dialogue evaluation requests |
+| `Dockerfile` | Container build configuration |
+| `requirements.txt` | Python dependency specification |
+| `/docs` | FastAPI's interactive API documentation when the service is running |
+
+A potential request-response workflow is:
+
+```mermaid
+sequenceDiagram
+    participant Client as Dispatcher Interface
+    participant API as FastAPI Backend
+    participant Model as Uncertainty Engine
+    participant Review as Human Reviewer
+
+    Client->>API: Submit dialogue as JSON
+    API->>Model: Evaluate dialogue
+    Model-->>API: Prediction and uncertainty metrics
+    API->>API: Apply configured safety gate
+
+    alt High uncertainty
+        API-->>Client: Request human review
+        Client->>Review: Present case and clarification
+    else Within threshold
+        API-->>Client: Return result for downstream checks
+    end
+```
+
+Deployment through Docker or a cloud service is an architectural objective. It should be described as implemented only after the application has been built, tested, and deployed successfully.
 
 ---
 
-## 7. Empirical Output Analysis & Validation
+## 7. Empirical Output Analysis and Validation
 
-In our baseline tests, running $T=20$ Monte Carlo Dropout passes across multi-turn emergency dialogue transcripts reveals a crucial safety feature: when the model encounters ambiguous text or undertrained parameters, it refuses to guess. Instead, it holds predictive uncertainty at its mathematical maximum and hands control to a human expert. 
+The baseline experiment uses 20 MC Dropout passes to evaluate three emergency dialogue turns.
 
-The empirical logs confirm that QUEST prioritizes safety over forced automation. When faced with under calibrated weights or ambiguous dialogue turns, the agent does not output high-risk guesses. Instead, it retains maximum predictive entropy ($H \approx 1.09$) and enforces human in the loop intervention across every turn.
-
-### Empirical Output Analysis
-
-> **Experiment:** Uncertainty-aware emergency triage using Monte Carlo Dropout and Human-in-the-Loop (HITL) review.
-
-###  Experimental Configuration
+### Experimental Configuration
 
 | Parameter | Configuration |
-|:---|:---|
+|---|---|
 | **Model Backbone** | `distilbert-base-uncased` |
+| **Model Architecture** | `DistilBertForSequenceClassification` |
 | **Uncertainty Technique** | Monte Carlo Dropout |
 | **Stochastic Passes** | `T = 20` |
 | **Dropout Probability** | `p = 0.3` |
 | **Number of Classes** | 3 — Low, Medium, Critical |
-| **Maximum Entropy** | `ln(3) ≈ 1.0986` |
+| **Theoretical Maximum Entropy** | `ln(3) ≈ 1.0986` |
 | **Safety Threshold** | `τ = 0.50` |
 
-###  Results Across Dialogue Turns
+### Results Across Dialogue Turns
 
-| Dialogue Turn | Predictive Entropy | Confidence | Safety Decision |
-|:---:|---:|---:|:---|
-| **Turn 1** | `1.0944` | `0.3747` |  HITL Triggered |
-| **Turn 2** | `1.0943` | `0.3729` |  HITL Triggered |
-| **Turn 3** | `1.0950` | `0.3691` |  HITL Triggered |
+| Turn | Predicted Class | Predictive Entropy | Reported Confidence | Safety Action |
+|:---:|---|---:|---:|---|
+| 1 | Critical | `1.0944` | `0.3747` | HITL triggered |
+| 2 | Critical | `1.0943` | `0.3729` | HITL triggered |
+| 3 | Critical | `1.0950` | `0.3691` | HITL triggered |
 
-**Interpretation:** All three reported entropy values are close to the theoretical maximum of `1.0986`. Each exceeds the configured safety threshold of `0.50`, so the system routes the interaction to human review.
+### Pipeline Execution Log
 
-###  Pipeline Explanation
+<details>
+<summary><strong>Turn 1 — Critical prediction</strong></summary>
 
-```mermaid
-flowchart TD
-    A["Emergency Dialogue Input"] --> B["DistilBERT Classifier"]
-    B --> C["Monte Carlo Dropout<br/>20 Stochastic Passes"]
-    C --> D["Predictive Probabilities"]
-    D --> E["Calculate Entropy"]
-    E --> F{"Entropy > 0.50?"}
-    F -->|Yes| G["Human Review"]
-    F -->|No| H["Continue Through<br/>Configured Safety Checks"]
-    G --> I["Ask Clarifying Questions"]
-    I --> J["Human Expert Assessment"]
+```text
+[TURN 1] Triage Prediction: Critical
+
+Entropy   : 1.0944
+Confidence: 0.3747
+
+Safety Evaluation:
+Predictive entropy exceeds the threshold of 0.50.
+Autonomous dispatch is halted and human review is triggered.
+
+Clarification:
+Does the patient experience chest pain or pressure
+radiating to the arm or jaw?
 ```
 
-###  Pipeline Execution Log
+</details>
 
 <details>
-<summary><strong>Turn 1 — View prediction and reflection</strong></summary>
+<summary><strong>Turn 2 — Critical prediction</strong></summary>
 
-- **Triage prediction:** Critical
-- **Entropy:** `1.0944`
-- **Confidence:** `0.3747`
-- **Safety action:** Human-in-the-Loop review
+```text
+[TURN 2] Triage Prediction: Critical
 
-**Clarification question:**
+Entropy   : 1.0943
+Confidence: 0.3729
 
-> Does the patient experience chest pain or pressure radiating to the arm or jaw?
+Safety Evaluation:
+Predictive entropy exceeds the threshold of 0.50.
+Human review remains active.
+
+Clarification:
+When did these symptoms first start,
+and are they continuous?
+```
 
 </details>
 
 <details>
-<summary><strong>Turn 2 — View prediction and reflection</strong></summary>
+<summary><strong>Turn 3 — Critical prediction</strong></summary>
 
-- **Triage prediction:** Critical
-- **Entropy:** `1.0943`
-- **Confidence:** `0.3729`
-- **Safety action:** Human-in-the-Loop review
+```text
+[TURN 3] Triage Prediction: Critical
 
-**Clarification question:**
+Entropy   : 1.0950
+Confidence: 0.3691
 
-> When did these symptoms first start, and are they continuous?
+Safety Evaluation:
+Predictive entropy exceeds the threshold of 0.50.
+Human review remains active.
 
-</details>
-
-<details>
-<summary><strong>Turn 3 — View prediction and reflection</strong></summary>
-
-- **Triage prediction:** Critical
-- **Entropy:** `1.0950`
-- **Confidence:** `0.3691`
-- **Safety action:** Human-in-the-Loop review
-
-**Clarification question:**
-
-> Can you provide additional clinical history?
+Clarification:
+Can you provide additional clinical history?
+```
 
 </details>
 
-###  Key Findings
+### Interpretation of the Results
 
-- **High predictive uncertainty:** Entropy remains close to the theoretical maximum for a three-class prediction.
-- **Safety-gate activation:** Every reported entropy value exceeds the configured threshold.
-- **Clarification before reliance:** The pipeline requests additional information instead of treating an uncertain prediction as sufficient for autonomous action.
-- **Human oversight:** The prototype routes uncertain cases for expert assessment.
+**1. Predictive entropy remains near its theoretical maximum.**
+
+For a three-class distribution, the theoretical maximum entropy is approximately `1.0986`. All three reported values remain close to that maximum.
+
+**2. Every reported entropy value exceeds the configured threshold.**
+
+The values range from `1.0943` to `1.0950`, substantially above the threshold of `0.50`. Under the stated decision rule, all three turns trigger human review.
+
+**3. The reported confidence is relatively low.**
+
+The reported confidence values range from `0.3691` to `0.3747`. Together with the entropy values, this suggests that the aggregate predictive distribution is relatively diffuse, assuming confidence is defined as the maximum class probability.
+
+**4. Uncertainty does not visibly decrease across the three reported turns.**
+
+The data show persistently high uncertainty rather than convergence. These observations do not demonstrate that additional dialogue turns necessarily reduce entropy.
+
+### Safety-Gate Summary
+
+| Validation Check | Result |
+|---|---|
+| Entropy exceeds `0.50` on Turn 1 | Yes |
+| Entropy exceeds `0.50` on Turn 2 | Yes |
+| Entropy exceeds `0.50` on Turn 3 | Yes |
+| All turns trigger HITL under the stated rule | Yes |
+| Entropy decreases consistently over all turns | Not demonstrated |
+| Clinical diagnostic accuracy established | Not established |
+
+### Metric Validation
+
+The supplied execution log previously reported variance as `0.000000` while describing it as "high model variance." These statements are inconsistent.
+
+Before making claims about model disagreement, verify that the implementation:
+
+- Enables dropout during every stochastic inference pass.
+- Performs the configured number of passes.
+- Calculates the mean predictive distribution correctly.
+- Calculates entropy from the mean class probabilities.
+- Computes variance across stochastic outputs rather than across a single deterministic result.
+- Defines confidence consistently, such as maximum mean class probability.
+- Uses a threshold that has been evaluated and justified on validation data.
 
 > [!IMPORTANT]
-> These results are experimental and do not establish clinical safety or diagnostic accuracy. The system must not replace emergency services or qualified medical professionals.
-
-###  Metric Validation Note
-
-The execution log reports model variance as `0.000000` while describing it as "high model variance." These statements are inconsistent and should be checked against the implementation.
-
-Predictive entropy measures uncertainty in the aggregate prediction; it does not, by itself, prove disagreement among the stochastic passes. Verify that the code calculates predictive entropy, mean confidence, and variance correctly before making stronger claims.
+> These results demonstrate the reported threshold-triggering behavior only. They do not establish calibrated uncertainty, correct triage classifications, improved clinical outcomes, or clinical safety.
 
 ---
 
+## 8. Key Contributions and Advantages
 
+### Calibrated Safety-Oriented Workflow
+
+The system makes predictive uncertainty part of its decision workflow and provides a mechanism for routing high-uncertainty cases to human review.
+
+### Quantitative Transparency
+
+Entropy and confidence values make the output easier to inspect and audit than a predicted class label alone.
+
+### Structured Human-AI Collaboration
+
+QUEST explores a workflow in which the AI provides predictions and clarification prompts while human professionals retain responsibility for the clinical assessment.
+
+### Multi-Turn Reassessment
+
+The architecture supports reassessing model outputs as new dialogue information arrives, allowing uncertainty to be monitored throughout a conversation.
+
+| Contribution | Intended Benefit |
+|---|---|
+| Explicit uncertainty metrics | Greater visibility into prediction ambiguity |
+| Threshold-based gating | Consistent application of the configured review rule |
+| Clarification workflow | Structured collection of further context |
+| Multi-turn assessment | Analysis of how predictions change across dialogue turns |
+
+---
 
 ## 9. Limitations
-* **Text-Based Pipeline:** Currently operates on written transcriptions rather than direct processing of raw speech acoustics or vocal stress cues.
-* **Static Thresholding:** Uses a fixed safety threshold ($\tau = 0.5$) rather than a dynamically learned, context-adaptive boundary.
-* **Simulation Scope:** Functions as an advanced academic prototype and benchmark framework rather than a clinical-grade medical device.
+
+| Limitation | Description |
+|---|---|
+| **Text-Based Processing** | The current design processes written transcripts rather than raw speech acoustics, vocal stress, or prosody. |
+| **Static Threshold** | The current configuration uses a fixed threshold of `τ = 0.50`. |
+| **Calibration Not Established** | The reported outputs alone do not demonstrate that uncertainty values are calibrated against observed error rates. |
+| **Evaluation Scope** | Three logged dialogue turns are insufficient to establish general performance or robustness. |
+| **Clinical Validation** | The prototype has not been established as a clinical-grade medical device. |
+| **Variance Calculation** | The reported zero variance and its interpretation require verification. |
+| **Dataset Reproducibility** | The exact dataset version, split strategy, and label-generation procedure should be documented for reproducibility. |
 
 ---
 
 ## 10. Future Research Directions
-* Integration of multimodal audio features (processing acoustic tone, pause duration, and vocal agitation directly).
-* Benchmarking on large scale real-world emergency dispatch corpora.
-* Implementation of **Active Learning** strategies where the agent formulates questions designed to maximize mathematical entropy reduction per dialogue turn.
+
+### Multimodal Audio Analysis
+
+Explore acoustic information such as pause duration, speaking rate, vocal agitation, and tone alongside transcript text.
+
+### Evaluation on Real-World Dispatch Data
+
+Evaluate the system using appropriately governed emergency dispatch data, with a documented annotation and validation process.
+
+### Active Learning and Information Gain
+
+Investigate question-selection strategies that choose clarification prompts based on expected information gain.
+
+One possible research objective is:
+
+\[
+q^* = \arg\max_q
+\left[
+H(Y\mid D) -
+\mathbb{E}_{a\sim P(a\mid q,D)}
+H(Y\mid D,q,a)
+\right]
+\]
+
+where:
+
+- \(D\) is the dialogue collected so far.
+- \(q\) is a candidate clarification question.
+- \(a\) is the possible response.
+- \(H(Y\mid D)\) is the current predictive entropy.
+
+This objective expresses the expected reduction in predictive entropy from asking a question. In practice, question selection must also account for clinical relevance, feasibility, urgency, and the risk of delaying emergency care.
+
+### Adaptive Safety Thresholds
+
+Study methods for selecting and validating thresholds using representative validation datasets, class-specific error rates, and the consequences of different types of misclassification.
+
+### Broader Experimental Validation
+
+Evaluate the prototype using:
+
+- Larger held-out datasets.
+- Multiple random seeds.
+- Calibration and selective-prediction metrics.
+- Error analysis by severity category.
+- Ablation studies comparing deterministic inference with MC Dropout.
+- Human review of clarification quality and operational usefulness.
 
 ---
 
-## 11. Technical Requirements & Environment setup
-* **Hardware:** NVIDIA CUDA compatible GPU instance (or Google Colab GPU runtime).
-* **Core Dependencies:** Python 3.9+, PyTorch, Hugging Face `transformers`, Pandas, NumPy, Matplotlib.
-* **Deployment Stack:** FastAPI, Uvicorn, Docker.
+## 11. Technical Requirements and Environment Setup
+
+### Hardware
+
+- NVIDIA CUDA-compatible GPU, where available.
+- Google Colab GPU runtime as an alternative experimental environment.
+- CPU execution may be possible, but inference can be slower.
+
+### Core Dependencies
+
+| Technology | Intended Purpose |
+|---|---|
+| Python 3.9+ | Application development |
+| PyTorch | Model inference and dropout operations |
+| Hugging Face Transformers | Pretrained language model and tokenizer |
+| NumPy | Numerical calculations |
+| Pandas | Structured result analysis |
+| Matplotlib | Experimental visualizations |
+| FastAPI | REST API implementation |
+| Uvicorn | ASGI application server |
+| Docker | Containerization |
+
+### Environment Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
+cd YOUR-REPOSITORY
+```
+
+Create and activate a virtual environment:
+
+```bash
+python -m venv .venv
+```
+
+On macOS or Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+On Windows:
+
+```powershell
+.venv\Scripts\activate
+```
+
+Install the project's dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Start the API after confirming that `app.py` implements the application:
+
+```bash
+uvicorn app:app --reload
+```
+
+If the application starts successfully, the interactive API documentation is typically available at:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+*These are setup instructions for the proposed project structure. Successful installation and execution depend on the actual contents of the repository and dependency file.*
+
+---
 
 ## 12. Repository Structure
-* `app.py`: FastAPI production backend service.
-* `Dockerfile`: Container build configuration for cloud hosting.
-* `requirements.txt`: Python package dependencies.
-* `uncertainty_reduction_curve.png`: Visualization of uncertainty convergence across dialogue turns.
+
+The intended repository layout is:
+
+```text
+QUEST/
+│
+├── README.md
+├── app.py
+├── requirements.txt
+├── Dockerfile
+│
+├── assets/
+│   └── predictive_entropy_by_turn.png
+│
+├── notebooks/
+│   └── experiments.ipynb
+│
+└── .gitignore
+```
+
+| File or Directory | Purpose |
+|---|---|
+| `README.md` | Project overview, architecture, results, and documentation |
+| `app.py` | FastAPI backend, if implemented |
+| `requirements.txt` | Python dependencies |
+| `Dockerfile` | Container configuration |
+| `assets/predictive_entropy_by_turn.png` | Optional graph of the reported entropy values |
+| `notebooks/experiments.ipynb` | Optional experimental notebook |
+| `.gitignore` | Excludes virtual environments, caches, secrets, and generated files |
+
+The notebook and asset paths are suggested organizational choices. Include them in the repository only when the corresponding files exist.
+
+---
+
+## 13. Safety and Research Disclaimer
+
+> [!CAUTION]
+> **QUEST is an experimental research prototype, not a medical device or a replacement for emergency services.**
+
+- Model predictions may be incorrect even when uncertainty is low.
+- High predictive uncertainty does not identify the correct diagnosis.
+- A threshold-triggered review does not itself guarantee a safe outcome.
+- Clinical decisions must remain with qualified professionals using appropriate emergency protocols.
+- Any future clinical use would require rigorous technical, clinical, ethical, and regulatory evaluation.
+
+### Research Goal
+
+QUEST explores a transparent, uncertainty-aware approach to AI-assisted emergency dialogue processing, with emphasis on identifying uncertain predictions and supporting human oversight.
+
+**The goal is not to replace human judgment, but to investigate how uncertainty can make AI-assisted decision workflows more accountable.**
+
+---
+
+<p align="center">
+  <strong>QUEST — Uncertainty-Aware AI for Human-Centered Emergency Decision Support</strong>
+</p>
+
+<p align="center">
+  <sub>Research prototype · Experimental evaluation · Human oversight</sub>
+</p>
