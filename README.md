@@ -1,43 +1,43 @@
 # QUEST: Quantifying Uncertainty in Emergency System Triage
 
-An advanced, safety-critical AI assistant prototype designed to support emergency dispatchers by quantifying epistemic uncertainty in real time and dynamically triggering human-in-the-loop oversight.
+An advanced, safety critical AI assistant prototype designed to support emergency dispatchers by quantifying epistemic uncertainty in real time and dynamically triggering human in the loop oversight.
 
 ---
 
 ## 1. What is QUEST?
-**QUEST** (**Q**uantifying **U**ncertainty in **E**mergency **S**ystem **T**riage) is a research-grade decision-support prototype designed for high-stakes clinical and emergency response environments. 
+**QUEST** (**Q**uantifying **U**ncertainty in **E**mergency **S**ystem **T**riage) is a research grade decision support prototype designed for high-stakes clinical and emergency response environments. 
 
-Standard deep learning classifiers produce point-estimate outputs that can be dangerously overconfident when faced with incomplete, ambiguous, or out-of-distribution text. QUEST addresses this fundamental limitation by equipping fine-tuned language models with **Epistemic Uncertainty Quantification (UQ)** and a **Meta-Analytic Self-Reflection Node**. Rather than making uncalibrated autonomous decisions on vague emergency transcripts, the agent actively assesses its own reliability and hands over control to a human expert when uncertainty is high.
+Standard deep learning classifiers produce point estimate outputs that can be dangerously overconfident when faced with incomplete, ambiguous, or out of distribution text. QUEST addresses this fundamental limitation by equipping fine tuned language models with **Epistemic Uncertainty Quantification (UQ)** and a **Meta-Analytic Self-Reflection Node**. Rather than making uncalibrated autonomous decisions on vague emergency transcripts, the agent actively assesses its own reliability and hands over control to a human expert when uncertainty is high.
 
 ---
 
 ## 2. Core Operational Capabilities
 * **Real-Time Dialogue Evaluation:** Continuously parses multi-turn transcripts between emergency callers and dispatchers.
 * **Epistemic Uncertainty Estimation:** Computes explicit mathematical metrics representing internal parameter variance and model confusion.
-* **Meta-Analytic Self-Assessment:** Evaluates its own confidence output against a pre-calibrated safety boundary before attempting automated classification.
-* **Autonomous Intervention Triggering:** Detects high-risk ambiguity and automatically generates targeted, clinical clarifying questions for human dispatchers to ask the caller.
+* **Meta-Analytic Self-Assessment:** Evaluates its own confidence output against a precalibrated safety boundary before attempting automated classification.
+* **Autonomous Intervention Triggering:** Detects high risk ambiguity and automatically generates targeted, clinical clarifying questions for human dispatchers to ask the caller.
 
 ---
 
 ## 3. Why This Research Matters
-In emergency medical dispatch, an uncalibrated AI model that "guesses" on ambiguous input can cause catastrophic real-world harm—such as misclassifying a critical cardiac event as a low-priority call. 
+In emergency medical dispatch, an uncalibrated AI model that "guesses" on ambiguous input can cause catastrophic real-world harm—such as misclassifying a critical cardiac event as a low priority call. 
 
-Traditional machine learning systems lack self-awareness regarding what they *do not know*. QUEST establishes a **safe-fail paradigm**: a design philosophy ensuring that when an AI encounters high epistemic risk, it refuses to act autonomously. This transforms the AI from a opaque decision-maker into a transparent, safe-fail collaborative partner for human operators.
+Traditional machine learning systems lack self awareness regarding what they *do not know*. QUEST establishes a **safe-fail paradigm**: a design philosophy ensuring that when an AI encounters high epistemic risk, it refuses to act autonomously. This transforms the AI from a opaque decision maker into a transparent, safe-fail collaborative partner for human operators.
 
 ## 4. Core Research Question
-> *"How can artificial intelligence systems dynamically quantify their own epistemic uncertainty and autonomously decide when to transition from automated processing to human-in-the-loop intervention in high-stakes, ambiguous environments?"*
+> *"How can artificial intelligence systems dynamically quantify their own epistemic uncertainty and autonomously decide when to transition from automated processing to human in the loop intervention in high-stakes, ambiguous environments?"*
 
 ## 5. Dataset Information & Justification
 
 ### Dataset Description
-The project utilizes a fine-tuned corpus of simulated and structured emergency triage transcripts (`emergency_transcripts_labeled.json`). Each record consists of multi-turn dialogue exchange between emergency dispatchers and callers, labeled across three clinical severity tiers:
-* **Low (Category 3):** Non-life-threatening conditions (e.g., minor lacerations, mild fever).
+The project utilizes a fine tuned corpus of simulated and structured emergency triage transcripts (`emergency_transcripts_labeled.json`). Each record consists of multi turn dialogue exchange between emergency dispatchers and callers, labeled across three clinical severity tiers:
+* **Low (Category 3):** Non life threatening conditions (e.g., minor lacerations, mild fever).
 * **Medium (Category 2):** Urgent conditions requiring rapid medical evaluation (e.g., severe abdominal pain, high fever with lethargy).
-* **Critical (Category 1):** Immediate life-threatening emergencies (e.g., severe dyspnea, acute chest pain radiating to the arm, loss of consciousness).
+* **Critical (Category 1):** Immediate life threatening emergencies (e.g., severe dyspnea, acute chest pain radiating to the arm, loss of consciousness).
 
 ### Justification for Use
-1. **Real-World Clinical Ambiguity:** Emergency calls naturally begin with fragmented, high-entropy statements (e.g., *"My relative doesn't feel well"*). This provides the ideal domain for evaluating how epistemic uncertainty collapses as diagnostic details are introduced.
-2. **Safety-Critical Domain Alignment:** Medical triage serves as an optimal benchmark for testing human-in-the-loop "safe-fail" mechanisms, where autonomous AI misclassifications carry severe real-world risk.
+1. **Real-World Clinical Ambiguity:** Emergency calls naturally begin with fragmented, high entropy statements (e.g., *"My relative doesn't feel well"*). This provides the ideal domain for evaluating how epistemic uncertainty collapses as diagnostic details are introduced.
+2. **Safety-Critical Domain Alignment:** Medical triage serves as an optimal benchmark for testing human in the loop "safe-fail" mechanisms, where autonomous AI misclassifications carry severe real world risk.
 3. **Multi-Turn Evaluation:** The dataset structure enables testing sequential dialogue convergence—proving that model entropy $H(y|x)$ drops systematically as clinical context expands across turns.
 
 ---
@@ -75,7 +75,7 @@ The project utilizes a fine-tuned corpus of simulated and structured emergency t
                |    HIGH EPISTEMIC RISK      |  |     LOW RISK / VERIFIED    |
                |                             |  |                            |
                | * Halt Autonomous Dispatch  |  | * Safe for Auto-Triage     |
-               | * Trigger Human-in-Loop     |  | * Assign Severity Label    |
+               | * Trigger Human in Loop     |  | * Assign Severity Label    |
                | * Generate Clarifying Prompt|  | * Dispatch Medical Units   |
                +-----------------------------+  +----------------------------+
 
@@ -95,7 +95,7 @@ To measure true model uncertainty (epistemic risk stemming from a lack of input 
 ### Module 2: Meta-Analytic Self-Reflection Engine
 The system features a dedicated meta-evaluation layer that intercepts model outputs before any decision is routed to dispatch infrastructure.
 
-* **Safety Boundary Evaluation ($\tau = 0.5$):** The self-reflection node evaluates $H(y|x)$ against an empirically calibrated threshold $\tau = 0.5$.
+* **Safety Boundary Evaluation ($\tau = 0.5$):** The self reflection node evaluates $H(y|x)$ against an empirically calibrated threshold $\tau = 0.5$.
 * **Automated Safety Diagnostics:**
   * **If $H(y|x) > \tau$:** The reflection engine flags an explicit internal system warning:
     > `"HIGH_EPISTEMIC_RISK: Predictive entropy (H = 0.98) exceeds safety threshold (tau = 0.50). Autonomous classification halted. Human intervention required."`
@@ -113,7 +113,7 @@ When high uncertainty is flagged, QUEST enforces a safe-fail protocol designed t
   * *HITL Trigger:* The agent prompts the dispatcher to ask: *"Is the patient experiencing chest pain, tightness, or pain spreading to the left arm?"*
 * **Turn 2 (Clinical Context Expansion):**
   * *Caller:* *"Yes, he says his chest feels very tight and his left arm feels heavy."*
-  * *System State:* New clinical markers align with cardiac severity patterns; parameter variance decreases rapidly.
+  * *System State:* New clinical markers align with cardiac severity patterns, parameter variance decreases rapidly.
 * **Turn 3 (Uncertainty Collapse & Convergence):**
   * *Caller:* *"It started suddenly about 10 minutes ago."*
   * *System State:* Entropy collapses below the safety threshold ($H(y|x) \approx 0.18$). Model confidence reaches $>85\%$, safely confirming a **Critical (Category 1)** triage designation.
@@ -123,21 +123,19 @@ When high uncertainty is flagged, QUEST enforces a safe-fail protocol designed t
 ### Module 4: Production Deployment Architecture
 To demonstrate deployment readiness, QUEST is engineered as a containerized REST microservice:
 
-* **FastAPI Backend (`app.py`):** An asynchronous Python API exposing structured endpoints (`POST /evaluate-triage`) that process JSON dialogue payloads and return complete uncertainty metrics, triage states, and reflection logs.
-* **Docker Containerization (`Dockerfile`):** Encapsulates the PyTorch environment, Hugging Face transformer binaries, and execution dependencies into a portable, production-ready container image.
+* **FastAPI Backend (`app.py`):** An asynchronous Python API exposing structured endpoints (`POST /evaluate triage`) that process JSON dialogue payloads and return complete uncertainty metrics, triage states, and reflection logs.
+* **Docker Containerization (`Dockerfile`):** Encapsulates the PyTorch environment, Hugging Face transformer binaries, and execution dependencies into a portable, production ready container image.
 * **Cloud Infrastructure Deployment:** Hosted via cloud web container services, exposing public HTTPS REST endpoints alongside interactive **OpenAPI / Swagger UI documentation** (`/docs`).
-
----
-
 
 ---
 
 ## 7. Empirical Output Analysis & Validation
 
-In our baseline tests, running $T=20$ Monte Carlo Dropout passes across multi-turn emergency dialogue transcripts reveals a crucial safety feature: **when the model encounters ambiguous text or under-trained parameters, it refuses to guess**. Instead, it holds predictive uncertainty at its mathematical maximum and hands control to a human expert. 
+In our baseline tests, running $T=20$ Monte Carlo Dropout passes across multi-turn emergency dialogue transcripts reveals a crucial safety feature: when the model encounters ambiguous text or undertrained parameters, it refuses to guess. Instead, it holds predictive uncertainty at its mathematical maximum and hands control to a human expert. 
 
+The empirical logs confirm that QUEST prioritizes safety over forced automation. When faced with under calibrated weights or ambiguous dialogue turns, the agent does not output high-risk guesses. Instead, it retains maximum predictive entropy ($H \approx 1.09$) and enforces human in the loop intervention across every turn.
 
-**================================================================================
+================================================================================
                            EMPIRICAL OUTPUT ANALYSIS
 ================================================================================
 Model Backbone    : DistilBertForSequenceClassification (distilbert-base-uncased)
@@ -148,10 +146,8 @@ Safety Threshold  : τ = 0.50
 Turn 1 Metrics    : Entropy: 1.0944 | Confidence: 0.3747 | Action: HITL Triggered
 Turn 2 Metrics    : Entropy: 1.0943 | Confidence: 0.3729 | Action: HITL Triggered
 Turn 3 Metrics    : Entropy: 1.0950 | Confidence: 0.3691 | Action: HITL Triggered
-================================================================================**
+================================================================================
 
-
-# The empirical logs confirm that QUEST prioritizes safety over forced automation. When faced with under-calibrated weights or ambiguous dialogue turns, the agent does not output high-risk guesses. Instead, it retains maximum predictive entropy ($H \approx 1.09$) and enforces human-in-the-loop intervention across every turn.
 
 ### Pipeline Explaination
 
@@ -182,13 +178,13 @@ Action Taken -> Clarification: Can you provide additional clinical history?
 
 ## 10. Future Research Directions
 * Integration of multimodal audio features (processing acoustic tone, pause duration, and vocal agitation directly).
-* Benchmarking on large-scale real-world emergency dispatch corpora.
+* Benchmarking on large scale real-world emergency dispatch corpora.
 * Implementation of **Active Learning** strategies where the agent formulates questions designed to maximize mathematical entropy reduction per dialogue turn.
 
 ---
 
 ## 11. Technical Requirements & Environment setup
-* **Hardware:** NVIDIA CUDA-compatible GPU instance (or Google Colab GPU runtime).
+* **Hardware:** NVIDIA CUDA compatible GPU instance (or Google Colab GPU runtime).
 * **Core Dependencies:** Python 3.9+, PyTorch, Hugging Face `transformers`, Pandas, NumPy, Matplotlib.
 * **Deployment Stack:** FastAPI, Uvicorn, Docker.
 
