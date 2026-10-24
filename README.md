@@ -104,8 +104,6 @@ Sequential dialogue can be used to investigate how predictive uncertainty change
 
 > **Evaluation objective:** Measure whether uncertainty responds appropriately to new information rather than assuming that every additional dialogue turn will reduce it.
 
-*Dataset note: The exact dataset version, preprocessing procedure, label mapping, and train/validation/test splits should be documented when these details are available.*
-
 ---
 
 ## 6. System Architecture and Detailed Mechanics
