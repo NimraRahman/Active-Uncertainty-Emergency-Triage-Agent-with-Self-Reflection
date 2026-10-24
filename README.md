@@ -1,4 +1,3 @@
-
 # QUEST — Quantifying Uncertainty in Emergency System Triage
 
 <p align="center">
