@@ -2,7 +2,7 @@
 # QUEST — Quantifying Uncertainty in Emergency System Triage
 
 <p align="center">
-  <strong>n advanced, safety critical AI assistant prototype designed to support emergency dispatchers by quantifying epistemic uncertainty in real time and dynamically triggering human in the loop oversight.</strong>
+  <strong> An advanced AI assistant prototype designed to support emergency dispatchers by quantifying epistemic uncertainty in real time and dynamically triggering human in the loop oversight.</strong>
 </p>
 
 ---
