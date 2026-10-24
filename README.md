@@ -2,43 +2,12 @@
 # QUEST — Quantifying Uncertainty in Emergency System Triage
 
 <p align="center">
-  <strong>A Safety-Aware AI Decision-Support Research Prototype</strong>
+  <strong>A AI Decision-Support Research Prototype</strong>
 </p>
 
 <p align="center">
   Quantifying predictive uncertainty to support human oversight in high-stakes emergency triage.
 </p>
-
-<p align="center">
-  ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
-  ![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-ee4c2c?logo=pytorch&logoColor=white)
-  ![Hugging Face](https://img.shields.io/badge/Transformers-Hugging%20Face-yellow?logo=huggingface&logoColor=black)
-  ![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)
-  ![Research](https://img.shields.io/badge/Project-Research%20Prototype-blueviolet)
-  ![Status](https://img.shields.io/badge/Status-Experimental-orange)
-</p>
-
----
-
-## Table of Contents
-
-- [1. What Is QUEST?](#1-what-is-quest)
-- [2. Core Operational Capabilities](#2-core-operational-capabilities)
-- [3. Why This Research Matters](#3-why-this-research-matters)
-- [4. Core Research Question](#4-core-research-question)
-- [5. Dataset Information and Justification](#5-dataset-information-and-justification)
-- [6. System Architecture and Detailed Mechanics](#6-system-architecture-and-detailed-mechanics)
-  - [Module 1: Uncertainty Quantification](#module-1-epistemic-uncertainty-quantification)
-  - [Module 2: Self-Reflection Engine](#module-2-meta-analytic-self-reflection-engine)
-  - [Module 3: Human-in-the-Loop Gating](#module-3-human-in-the-loop-hitl-safe-fail-gating)
-  - [Module 4: Deployment Architecture](#module-4-deployment-architecture)
-- [7. Empirical Output Analysis and Validation](#7-empirical-output-analysis-and-validation)
-- [8. Key Contributions and Advantages](#8-key-contributions-and-advantages)
-- [9. Limitations](#9-limitations)
-- [10. Future Research Directions](#10-future-research-directions)
-- [11. Technical Requirements and Environment Setup](#11-technical-requirements-and-environment-setup)
-- [12. Repository Structure](#12-repository-structure)
-- [13. Safety and Research Disclaimer](#13-safety-and-research-disclaimer)
 
 ---
 
