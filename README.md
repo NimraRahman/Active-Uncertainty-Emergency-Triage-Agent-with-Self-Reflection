@@ -34,11 +34,11 @@ Rather than treating every prediction as reliable, QUEST is designed to identify
 | Capability | Description |
 |---|---|
 | **Multi-Turn Dialogue Evaluation** | Processes written emergency caller and dispatcher transcripts across dialogue turns. |
-| **Uncertainty Quantification** | Calculates predictive entropy and measures variability across stochastic model passes. |
-| **Meta-Analytic Self-Assessment** | Compares predictive entropy against a configured safety threshold. |
-| **Risk-Aware Gating** | Routes high uncertainty cases for human review rather than treating the prediction as sufficient for autonomous action. |
-| **Clarification Prompts** | Suggests follow up questions to help gather additional information. |
-| **API-Oriented Design** | Specifies a potential deployment interface using FastAPI and structured JSON responses. |
+| **Uncertainty Quantification**     | Calculates predictive entropy and measures variability across stochastic model passes. |
+| **Meta-Analytic Self-Assessment**  | Compares predictive entropy against a configured safety threshold. |
+| **Risk-Aware Gating**              | Routes high uncertainty cases for human review rather than treating the prediction as sufficient for autonomous action. |
+| **Clarification Prompts**          | Suggests follow up questions to help gather additional information. |
+| **API-Oriented Design**            | Specifies a potential deployment interface using FastAPI and structured JSON responses. |
 
 ---
 
