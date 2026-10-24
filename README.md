@@ -78,13 +78,13 @@ QUEST explores this question through uncertainty estimation, threshold based saf
 
 The dataset source used for streaming medical dialogue samples is **MedDialog** accessed via Hugging Face as a source of medical dialogue data for experimentation.
 
-Each record consists of multi turn dialogue exchange between emergency dispatchers and callers, labeled across three clinical severity tiers:
+Each record consists of multi turn dialogue exchange between emergency dispatchers and callers, labeled across three clinical severity tiers are:
 
-| Severity Tier | Category  | Description | Example |
-|---|---|---|---|
-| **Low**      | Category 3   | Non-life-threatening conditions                | Minor lacerations or mild fever |
-| **Medium**   | Category 2   | Urgent conditions requiring medical evaluation | Severe abdominal pain or high fever with lethargy |
-| **Critical** | Category 1   | Potentially life-threatening emergencies       | Severe breathing difficulty, acute chest pain, or loss of consciousness |
+* **Label Mapping:** Class labels map directly to clinical priority tiers:
+  * `0`: **Low (Category 3)** — Non-life-threatening conditions.
+  * `1`: **Medium (Category 2)** — Urgent clinical evaluations.
+  * `2`: **Critical (Category 1)** — Immediate life-threatening emergencies.
+* **Tokenization & Processing:** Dialogues are tokenized using `DistilBertTokenizer` with `truncation=True` and `padding='max_length'` to handle multi-turn context expansion across conversation history.
 
 *These severity descriptions illustrate the intended task categories. They are not clinical diagnostic rules.*
 
@@ -101,6 +101,8 @@ Triage provides a useful research setting for investigating when uncertain model
 **3. Multi-turn evaluation**
 
 Sequential dialogue can be used to investigate how predictive uncertainty changes as new contextual information becomes available.
+
+**4. Validation Benchmark:** **MedDialog** is open-source medical dialogue dataset used for validating conversational pipeline processing.
 
 > **Evaluation objective:** Measure whether uncertainty responds appropriately to new information rather than assuming that every additional dialogue turn will reduce it.
 
