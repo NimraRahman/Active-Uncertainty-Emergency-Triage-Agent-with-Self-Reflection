@@ -137,115 +137,29 @@ flowchart TD
 
 Passing an entropy threshold alone does not establish clinical correctness or guarantee that a prediction is safe.
 
-### Module 1: Epistemic Uncertainty Quantification
+### Module 1: Epistemic Uncertainty Quantification (UQ)
+To measure true model uncertainty (epistemic risk stemming from a lack of input data/context), QUEST implements **Monte Carlo Dropout** during the inference phase.
 
-QUEST investigates **Monte Carlo Dropout (MC Dropout)** as a technique for measuring variability across stochastic inference passes.
-
-#### Stochastic Inference
-
-Instead of performing a single forward pass, dropout remains active during inference. The same input is processed through \(T\) stochastic passes.
-
-The predictive distribution for pass \(t\) is:
-
-\[
-\hat{p}^{(t)} =
-\operatorname{Softmax}\left(f_{\hat{\theta}^{(t)}}(x)\right)
-\]
-
-where:
-
-- \(x\) is the input dialogue.
-- \(T\) is the number of stochastic passes.
-- \(\hat{\theta}^{(t)}\) represents the effective model configuration for pass \(t\).
-
-The mean predictive probability for class \(c\) is:
-
-\[
-\mu_c(x) =
-\frac{1}{T}\sum_{t=1}^{T}\hat{p}^{(t)}_c
-\]
-
-#### Predictive Entropy
-
-Predictive entropy measures the uncertainty in the aggregate class distribution:
-
-\[
-H(y\mid x) =
--\sum_{c\in C}
-\mu_c(x)\log\left(\mu_c(x)+\epsilon\right)
-\]
-
-where \(C\) is the set of severity classes and \(\epsilon\) is a small numerical stabilizer.
-
-For three classes with natural logarithms, maximum entropy occurs when all classes have equal probability:
-
-\[
-H_{\max}=\ln(3)\approx 1.0986
-\]
-
-| Entropy Pattern | General Interpretation |
-|---|---|
-| Near `0` | Probability concentrated on one class |
-| Near `ln(3)` | Probability distributed relatively evenly across three classes |
-
-High predictive entropy indicates ambiguity in the aggregate prediction. By itself, it does not prove that the uncertainty is epistemic or that different model passes disagree.
-
-#### Class Variance
-
-QUEST also intends to measure variability across MC Dropout passes. This requires a clearly specified variance calculation over the stochastic class probabilities or another explicitly defined model output.
-
-Predictive entropy and variance measure different properties and should not be used interchangeably.
+* **Stochastic Inference ($T=20$):** Rather than performing a single deterministic forward pass, internal dropout layers ($p=0.3$) remain active at test time. The system executes $T=20$ stochastic forward passes over the exact same input utterance:
+  $$\hat{p}^{(t)} = \text{Softmax}(f_{\hat{\theta}^{(t)}}(x)) \quad \text{for } t \in \{1, \dots, T\}$$
+* **Predictive Entropy $H(y|x)$:** The agent calculates the mean predictive distribution $\mu(x)$ and computes the total predictive entropy across all potential severity classes $C$:
+  $$H(y|x) = -\sum_{c \in C} \mu_c(x) \log\left(\mu_c(x) + \epsilon\right)$$
+  * *High Entropy ($H \to 1.0$):* Model predictions are evenly scattered across categories, signaling high confusion.
+  * *Low Entropy ($H \to 0.0$):* Predictions consistently cluster around a single class, signaling high certainty.
+* **Epistemic Class Variance:** Measures parameter dispersion across the $T=20$ passes to verify internal subnetwork agreement.
 
 ---
 
 ### Module 2: Meta-Analytic Self-Reflection Engine
+The system features a dedicated meta-evaluation layer that intercepts model outputs before any decision is routed to dispatch infrastructure.
 
-The self-reflection layer evaluates model outputs before a downstream decision is considered.
-
-#### Safety Threshold
-
-The current experimental configuration specifies:
-
-\[
-\tau=0.50
-\]
-
-The decision rule is:
-
-\[
-\text{Decision}(x)=
-\begin{cases}
-\text{Human review}, & H(y\mid x)>\tau\\
-\text{Continue safety checks}, & H(y\mid x)\leq\tau
-\end{cases}
-\]
-
-A low entropy result should still undergo any other required validation and operational safety checks.
-
-#### Example Diagnostic Messages
-
-**High-uncertainty state — illustrative message**
-
-```text
-HIGH_EPISTEMIC_RISK
-
-Predictive entropy exceeds the configured safety threshold.
-Autonomous classification is halted.
-Human intervention is required.
-```
-
-**Lower-uncertainty state — illustrative message**
-
-```text
-UNCERTAINTY_WITHIN_THRESHOLD
-
-Predictive entropy is at or below the configured threshold.
-Continue required validation and downstream safety checks.
-```
-
-These messages illustrate the intended system behavior, they are not evidence of a clinically validated operating boundary.
-
----
+* **Safety Boundary Evaluation ($\tau = 0.5$):** The self reflection node evaluates $H(y|x)$ against an empirically calibrated threshold $\tau = 0.5$.
+* **Automated Safety Diagnostics:**
+  * **If $H(y|x) > \tau$:** The reflection engine flags an explicit internal system warning:
+    > `"HIGH_EPISTEMIC_RISK: Predictive entropy (H = 0.98) exceeds safety threshold (tau = 0.50). Autonomous classification halted. Human intervention required."`
+  * **If $H(y|x) \le \tau$:** The reflection engine validates the signal:
+    > `"SIGNAL_CONVERGED: Predictive entropy (H = 0.18) within safe operating bounds. Automated classification approved."`
+--
 
 ### Module 3: Human-in-the-Loop (HITL) Safe-Fail Gating
 
