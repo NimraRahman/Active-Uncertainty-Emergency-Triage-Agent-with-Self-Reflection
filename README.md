@@ -153,14 +153,14 @@ To measure true model uncertainty (epistemic risk stemming from a lack of input 
 ### Module 2: Meta-Analytic Self-Reflection Engine
 The system features a dedicated meta-evaluation layer that intercepts model outputs before any decision is routed to dispatch infrastructure.
 
-* **Safety Boundary Evaluation ($\tau = 0.5$):** The self reflection node evaluates $H(y|x)$ against an empirically calibrated threshold $\tau = 0.5$.
+* **Safety Boundary Evaluation ($\tau = 0.5$):** The self-reflection node evaluates $H(y|x)$ against an empirically calibrated threshold $\tau = 0.5$.
 * **Automated Safety Diagnostics:**
   * **If $H(y|x) > \tau$:** The reflection engine flags an explicit internal system warning:
     > `"HIGH_EPISTEMIC_RISK: Predictive entropy (H = 0.98) exceeds safety threshold (tau = 0.50). Autonomous classification halted. Human intervention required."`
   * **If $H(y|x) \le \tau$:** The reflection engine validates the signal:
     > `"SIGNAL_CONVERGED: Predictive entropy (H = 0.18) within safe operating bounds. Automated classification approved."`
---
 
+---
 ### Module 3: Human-in-the-Loop (HITL) Safe-Fail Gating
 
 When the uncertainty criterion is exceeded, QUEST is designed to route the case for human review and suggest clarification questions.
