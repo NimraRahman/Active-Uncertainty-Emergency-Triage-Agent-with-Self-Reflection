@@ -243,7 +243,7 @@ Predictive entropy is at or below the configured threshold.
 Continue required validation and downstream safety checks.
 ```
 
-These messages illustrate the intended system behavior; they are not evidence of a clinically validated operating boundary.
+These messages illustrate the intended system behavior, they are not evidence of a clinically validated operating boundary.
 
 ---
 
@@ -296,7 +296,7 @@ The system can reassess its output using the expanded transcript. Any triage des
 </details>
 
 > [!NOTE]
-> This dialogue describes an intended research scenario. The empirical results in Section 7 are reported separately; they do not demonstrate uncertainty collapsing below the threshold in this three-turn experiment.
+> This dialogue describes an intended research scenario. The empirical results in Section 7 are reported separately, they do not demonstrate uncertainty collapsing below the threshold in this three-turn experiment.
 
 ---
 
