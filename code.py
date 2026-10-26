@@ -1,3 +1,5 @@
+!pip install -q fastapi "uvicorn[standard]" pydantic torch transformers nest_asyncio
+
 %%writefile app.py
 import math
 from typing import Dict, List, Optional
@@ -138,3 +140,31 @@ def evaluate_triage(payload: TriageRequest):
         action_taken=action_taken,
         human_in_the_loop_prompt=hitl_prompt
     )
+
+# Launch the local Server & Expose via Public Tunnel
+
+import threading
+import uvicorn
+import nest_asyncio
+import time
+
+# Apply async loop patch for Colab notebooks
+nest_asyncio.apply()
+
+# Use a new port to avoid the "address already in use" conflict
+PORT = 8090
+
+def run_server():
+    uvicorn.run("app:app", host="0.0.0.0", port=PORT)
+
+# Start FastAPI in a background daemon thread
+server_thread = threading.Thread(target=run_server, daemon=True)
+server_thread.start()
+
+print(f"FastAPI server starting on port {PORT}. Waiting 10 seconds for model to load...")
+time.sleep(10) # Gives PyTorch time to load DistilBERT into memory
+
+# Install localtunnel and generate a public URL pointing to your new port
+!npm install -g localtunnel &> /dev/null
+print(f"\nYour new public tunnel URL for port {PORT} is:")
+!npx localtunnel --port {PORT}
