@@ -1,10 +1,11 @@
 # QUEST — Quantifying Uncertainty in Emergency System Triage
 
 <p align="center">
-  <strong> An advanced AI assistant prototype designed to support emergency dispatchers by quantifying epistemic uncertainty in real time and dynamically triggering human in the loop oversight.</strong>
+  <strong> An open-source, non-black-box Epistemic Uncertainty Quantification (UQ) engine for clinical triage decision support. **QUEST** implements Monte Carlo Dropout ($T=20$) over a Transformer backbone to calculate predictive entropy in real time, enforcing a strict safe-fail gating mechanism ($\tau = 0.5$) that dynamically halts autonomous action and triggers Human-in-the-Loop (HITL) oversight when model variance is high.
+
+</strong>
 </p>
 
----
 
 ## 1. What Is QUEST?
 
@@ -27,7 +28,40 @@ Rather than treating every prediction as reliable, QUEST is designed to identify
 > QUEST is an experimental research prototype, not a clinically validated medical device. Its predictions must not replace emergency services, qualified dispatchers, or medical professionals.
 
 ---
+## Key Features
 
+- **Epistemic Uncertainty Quantification**: Measures model uncertainty via stochastic Monte Carlo (MC) dropout passes during inference time.
+- **Safe-Fail Decision Gating**: Enforces a hard threshold ($\tau = 0.5$) on predictive entropy $H(y\vert{}x)$ to block unsafe autonomous dispatch.
+- **Contextual HITL Prompt Generation**: Dynamically outputs targeted clinical clarification questions when high risk is detected.
+- **Production-Grade Microservice**: Exposes structured JSON endpoints via FastAPI with built-in Pydantic data validation.
+- **Active Dialogue Auditability**: Generates uncertainty reduction curves (`uncertainty_reduction_curve.png`) tracking entropy collapse across multi-turn emergency dialogue.
+
+---
+
+### Theoretical Foundation
+
+Traditional deep learning classifiers produce overconfident predictions even when inputs are ambiguous or out-of-distribution. QUEST addresses this by estimating epistemic uncertainty directly from first principles.
+
+### A. Stochastic Forward Passes (Monte Carlo Dropout)
+During inference, internal dropout layers ($p = 0.3$) remain active. The system executes $T=20$ stochastic forward passes for a given dialogue input $x$:
+
+$$\hat{p}^{(t)} = \text{Softmax}\left(f_{\hat{\theta}^{(t)}}(x)\right) \quad \text{for } t \in \{1, \dots, T\}$$
+
+### B. Predictive Entropy Calculation
+The system calculates the mean predictive probability distribution $\mu(x)$ across all samples and computes total predictive entropy $H(y\vert{}x)$ over $C=3$ triage classes:
+
+$$\mu_c(x) = \frac{1}{T} \sum_{t=1}^{T} \hat{p}_c^{(t)}$$
+
+$$H(y\vert{}x) = -\sum_{c \in C} \mu_c(x) \log\left(\mu_c(x)\right)$$
+
+### C. Safe-Fail Logic Boundary
+
+| Predictive Entropy $H(y\vert{}x)$ | Risk Designation | System Action | HITL Prompt |
+|---|---|---|---|
+| **$H(y\vert{}x) < 0.50$** | `LOW_EPISTEMIC_RISK` | `AUTONOMOUS_DISPATCH_PERMITTED` | `null` |
+| **$H(y\vert{}x) \ge 0.50$** | `HIGH_EPISTEMIC_RISK` | `HALT_AUTONOMOUS_DISPATCH` | Dynamic Clarification Triggered |
+
+---
 ## 2. Core Operational Capabilities
 
 | Capability | Description |
