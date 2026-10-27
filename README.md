@@ -1,9 +1,8 @@
 # QUEST — Quantifying Uncertainty in Emergency System Triage
 
 <p align="center">
-  <strong> An open-source, non-black-box Epistemic Uncertainty Quantification (UQ) engine for clinical triage decision support. **QUEST** implements Monte Carlo Dropout ($T=20$) over a Transformer backbone to calculate predictive entropy in real time, enforcing a strict safe-fail gating mechanism ($\tau = 0.5$) that dynamically halts autonomous action and triggers Human-in-the-Loop (HITL) oversight when model variance is high.
+An open-source, non-black-box Epistemic Uncertainty Quantification (UQ) engine for clinical triage decision support. QUEST implements Monte Carlo Dropout ($T=20$) over a Transformer backbone to calculate predictive entropy in real time, enforcing a strict safe-fail gating mechanism ($\tau = 0.5$) that dynamically halts autonomous action and triggers Human-in-the-Loop (HITL) oversight when model variance is high.
 
-</strong>
 </p>
 
 
